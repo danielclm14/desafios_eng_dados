@@ -1,0 +1,96 @@
+vamos fazer alguns desafios de engenharia de dados,
+peço que mantenha o nivel de detalhamento e documente o codigo de forma agarantir o maior nivel de senioridade possivel,
+para as linguagens opte principalmente por python quando for possivel, sqlalchemy como biblioteca
+use sql e afins quando for necessario, se houver alguma linguagem mais adequada para algum processo por favor sugerir.
+Desafios:
+Sua empresa, uma Fintech que realiza empréstimos para produtores rurais, trabalha com
+diferentes tipos de títulos de crédito (CCBs(Cédulas de Crédito Bancario), CPRs(Cédula de
+Produto Rural) e Notas Promissórias) e processos de pagamento (boletos gerados via API e
+registros de pagamentos em arquivos posicionais).
+Desafio 1
+Descrição:
+Os dados das CCBs estão inicialmente registrados em um banco MongoDB e precisam ser
+transferidos para um banco Postgres para outras operações. Forneça uma solução que
+realize essa transferência de forma periódica e destaque o método utilizado.
+Dentro do documento no MongoDB, se encontram as informações do contrato e dos
+pagamentos deste contrato.
+Demonstrar qual estrutura de dados você faria para receber estes dados no Postgres.
+Escolha de ferramentas e bibliotecas que faria para resolver este problema.
+Como a solução lidaria com falhas na conexão, registros duplicados ou inconsistências?
+Defina a estratégia para execução periódica.
+Evite duplicações: Usa ON CONFLICT DO NOTHING no PostgreSQL, busca antes da inserção.
+Resiliente a falhas: O Airflow reexecuta em caso de erro,try/except na conexão.
+Execução periódica: Configurada para rodar automaticamente.
+Uso eficiente de dados: Estrutura relacional otimizada no PostgreSQL.
+Dados Inválidos: get(), validação de tipos, valores padrão
+Referências Quebradas: Chaves estrangeiras (ON DELETE CASCADE)
+Registros com Erro: Logs detalhados, reprocessamento automático
+Validação de dados: Garante que CPF, datas e números estão corretos
+Tabela de erros (erros_etl): Armazena falhas para reprocessamento posterior
+Constraints no PostgreSQL: Evita valores incorretos no banco
+Dead Letter Queue (DLQ): Separa registros que falharam muitas vezes
+Monitoramento (Logs e Grafana): Permite análise do desempenho do ETL
+Testes Automatizados: Impede que mudanças quebrem o pipeline
+
+desafio2: 
+vamos entao a um desafio, tente respondelo de forma a garantir o maior nivel de senioridade possivel,
+bem como documentando e explicando o passo a passo do processo de desenvolvimento e explicando o porque das escolhas.
+Priorise a utilizacao de python como linguagem, mas proponha outra linguagem se for necessario.
+As informações das CPRs e Notas Promissórias estão disponíveis em arquivos PDF e planilhas.
+você deve propor uma solução para extrair os dados destes documentos,
+padronizá-los e armazená-los em um ambiente de análise.
+Apresentar uma abordagem para extrair dados de PDFs.
+Propor um método para ler e tratar dados de planilhas, incluindo o armazenamento e extração.
+Unificação os dados extraídos, validando e transformando conforme necessário, 
+e carga para uma base de dados central, destacando qual estrutura utilizaria e por que.
+
+desafio3:
+vamos entao a um desafio, tente respondelo de forma a garantir o maior nivel de senioridade possivel,
+bem como documentando e explicando o passo a passo do processo de desenvolvimento e explicando o porque das escolhas.
+Priorise a utilizacao de python como linguagem, mas proponha outra linguagem se for necessario.
+Diariamente, um arquivo posicional(CNAB200) contendo o registro dos pagamentos é
+gerado. Você deverá desenvolver uma solução que faça o parsing deste arquivo, valide os
+dados os insira tanto no banco, quando numa solução centralizada.
+Header (1a linha, 200 caracteres)
+Posições 1–3: 237 (código do banco)
+Posições 4–7: 0001 (agência)
+Posições 8–17: 2025020401 (data/hora de geração – exemplo fictício)
+Posições 18–37: FINTECH EMPRESA LTDA (20 caracteres exatos)
+Posições 38–57: ARQUIVO RETORNO (15 caracteres) + 5 espaços = 20
+Posições 58–200: 143 espaços (filler)
+Detalhes (linhas 2 a 9, cada uma com 200 caracteres)
+Posição 1: 1 (identifica registro de detalhe)
+Posições 2–4: 237 (código do banco)
+Posições 5–14: Nosso Número (10 dígitos, ex.: 0000000001 )
+Posições 15–24: Número do Documento (10 dígitos, ex.: 0000001001 )
+Posições 25–32: Data de Vencimento ( 20250210 )
+Posições 33–42: Valor do Título ( 0000010000 = R$ 100,00)
+Posições 43–50: Data do Pagamento ( 20250211 )
+Posições 51–62: Valor Pago ( 000000010000 = R$ 100,00)
+Posições 63–77: CPF/CNPJ do Pagador (15 dígitos, ex.: 000000000000001 )
+Posições 78–107: Nome do Pagador (30 caracteres, alinhado à esquerda + espaços)
+Posições 108–200: 93 espaços (filler)
+Trailer (10a linha, 200 caracteres)
+Posição 1: 9 (identifica registro trailer)
+Posições 2–7: 000008 (quantidade de registros de detalhe)
+Posições 8–20: 0000000800000 (soma dos valores pagos – 8 boletos de R$100,00 = R$ 800,00; em centavos = 80000 , com zeros à esquerda até 13 dígitos)
+Posições 21–200: 180 espaços (filler)
+
+23700012025020401FINTECH EMPRESA LTDAARQUIVO RETORNO
+1237000000000100000010012025021000000100002025021100000001000000000000001JOA
+O DA SILVA
+1237000000000200000010022025021000000100002025021100000001000000000000002MAR
+IA DOS SANTOS
+1237000000000300000010032025021000000100002025021100000001000000000000003CAR
+LOS ALMEIDA
+1237000000000400000010042025021000000100002025021100000001000000000000004ANA
+PEREIRA
+1237000000000500000010052025021000000100002025021100000001000000000000005PED
+RO SOUZA
+1237000000000600000010062025021000000100002025021100000001000000000000006LUI
+SA FERREIRA
+1237000000000700000010072025021000000100002025021100000001000000000000007MAR
+COS PEREIRA
+1237000000000800000010082025021000000100002025021100000001000000000000008JUL
+IA COSTA
+900000800000000800000
